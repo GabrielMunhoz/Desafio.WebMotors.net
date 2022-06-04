@@ -1,0 +1,116 @@
+﻿@model Desafio.WebMotors.Data.TbAnuncioWebmotor
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Editar anuncio</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Marca"  class="control-label"></label>
+                <select asp-for="Marca" asp-items="@ViewBag.Marcas" id="Marca" class="form-control"></select>
+                <span asp-validation-for="Marca" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Modelo" class="control-label"></label>
+                <select asp-for="Modelo" asp-items="@ViewBag.Modelos" id="Modelo" class="form-control"></select>
+                <span asp-validation-for="Modelo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Versao" class="control-label"></label>
+                <select asp-for="Versao" asp-items="@ViewBag.Versoes" id="Versao" class="form-control"></select>
+                <span asp-validation-for="Versao" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ano" class="control-label"></label>
+                <input asp-for="Ano" class="form-control" />
+                <span asp-validation-for="Ano" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Quilometragem" class="control-label"></label>
+                <input asp-for="Quilometragem" class="form-control" />
+                <span asp-validation-for="Quilometragem" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-2">
+                <label asp-for="Observacao" class="control-label"></label>
+                <input asp-for="Observacao" class="form-control" />
+                <span asp-validation-for="Observacao" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Voltar a lista</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+            $('#Marca').change(function () {
+                var idMake = $("#Marca").val();
+                var ModelsSelect = $('#Modelo');
+                ModelsSelect.empty();
+                if (idMake != null && idMake != '') {
+                    console.log(idMake); 
+                    $.getJSON('@Url.Action("getModels")', {idMake}, function (models) {
+                        if (models != null && !jQuery.isEmptyObject(models))
+                        {
+                            ModelsSelect.append($('<option/>', {
+                                value: null,
+                                text: ""
+                            }));
+
+                            var arrayJson = JSON.parse(models);
+                                arrayJson.forEach(function(model){
+                                    ModelsSelect.append($('<option/>', {
+                                    value: model.Value,
+                                    text: model.Text
+                                    }));
+                                })
+
+                        };
+                    });
+                }
+            });
+
+             $('#Modelo').change(function () {
+                var idModel = $("#Modelo").val();
+                var VersionSelect = $('#versao');
+                VersionSelect.empty();
+                if (idModel != null && idModel != '') {
+                    console.log(idModel); 
+                    $.getJSON('@Url.Action("getVersions")', {idModel}, function (versions) {
+                        if (versions != null && !jQuery.isEmptyObject(versions))
+                        {
+                            console.log("entrou aqui")
+                            console.log(versions); 
+                            VersionSelect.append($('<option/>', {
+                                value: null,
+                                text: ""
+                            }));
+
+                            var arrayJson = JSON.parse(versions);
+                                arrayJson.forEach(function(version){
+                                    console.log("Entrou aqui for" + version.Text)
+                                    VersionSelect.append($('<option/>', {
+                                    value: version.Value,
+                                    text: version.Text
+                                    }));
+                                })
+
+                        };
+                    });
+                }
+            });
+    </script>
+}
